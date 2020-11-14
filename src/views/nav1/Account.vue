@@ -25,9 +25,9 @@
 			</el-table-column>
 			<el-table-column prop="fullName" label="Full Name" width="220" sortable>
 			</el-table-column>
-			<el-table-column prop="email" label="Email" width="200" sortable>
+			<el-table-column prop="email" label="Email" width="250" sortable>
 			</el-table-column>
-			<el-table-column prop="address" label="Address" width="200" sortable>
+			<el-table-column prop="address" label="Address" width="260" sortable>
 			</el-table-column>
 			<el-table-column prop="phoneNumber" label="Phone Number" min-width="180" sortable>
 			</el-table-column>

@@ -17,9 +17,8 @@
 		</el-col>
 
 		<!-- List call api -->
-		<el-table :data="apiUsers" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
-			<el-table-column type="selection" width="55">
-			</el-table-column>
+		<el-table :data="apiLeaders" highlight-current-row v-loading="listLoading" style="width: 100%;">
+			
 			<el-table-column prop="id" label="Id" width="350">
 			</el-table-column>
 			<el-table-column prop="name" label="Name" width="200" sortable>
@@ -42,7 +41,8 @@
 
 		<!--Bottom Toolbar-->
 		<el-col :span="24" class="toolbar">
-			<el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">Batch Remove</el-button>
+			<!-- <span>Total Teams:</span>
+			<el-input :placeholder="totalTeams" disabled style="width:50px" size="small"></el-input> -->
 			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">
 			</el-pagination>
 		</el-col>
@@ -117,27 +117,14 @@
 				<el-form-item label="Last Name" prop="lastName">
 					<el-input v-model="addAccount.lastName" auto-complete="off" ></el-input>
 				</el-form-item>
-				<!-- <el-form-item label="Gender">
-					<el-radio-group v-model="addAccount.sex">
-						<el-radio class="radio" :label="1">Male</el-radio>
-						<el-radio class="radio" :label="0">Female</el-radio>
-					</el-radio-group>
-				</el-form-item> -->
-				<!-- <el-form-item label="Age">
-					<el-input-number v-model="addAccount.age" :min="0" :max="200"></el-input-number>
-				</el-form-item> -->
-				<!-- <el-form-item label="Date of Birth">
-					<el-date-picker type="date" placeholder="Select Date" v-model="addAccount.birth"></el-date-picker>
-				</el-form-item> -->
+				
 				<el-form-item label="Address">
 					<el-input type="textarea" v-model="addAccount.address"></el-input>
 				</el-form-item>
 				<el-form-item label="Phone Number" prop="phone">
 					<el-input v-model="addAccount.phone" auto-complete="off" ></el-input>
 				</el-form-item>
-				<!-- <el-form-item label="Is Buyer:" prop="isBuyer">
-					<el-input v-model="addAccount.isBuyer" auto-complete="off" disabled></el-input>
-				</el-form-item> -->
+			
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click.native="addAccountVisible = false">Cancel</el-button>
@@ -217,22 +204,22 @@
 				},
 
 				//data get from api
-				apiUsers: []
+				apiLeaders: [],
+				//total leaders
+				totalLeader: `0`,
 
 			}
 		},
 		methods: {
 			//get users from api
-			getUserApi: function() {
-				// JSONHTTP.get(`users`).then(response => {
-				// 	this.apiUsers = response.data;
-				// 	console.log(this.apiUsers);
-				// })
-				// .catch(e => {
-				// 	console.log(e);
-				// })
-				HTTP.get(`Leader/Allnonpaging`).then(response => {
-					this.apiUsers = response.data;
+			getLeaderApi: function() {
+				
+				let para = {
+					pageNo: this.page
+				}; 
+
+				HTTP.get(`Leader/GetAllWithPaging?pageNumber=` + --para.pageNo + `&itemPerPage=10`).then(response => {
+					this.apiLeaders = response.data;
 					console.log(this.apiUsers);
 				})
 				.catch(e => {
@@ -254,6 +241,8 @@
 					isBuyer: true
 				};
 			},
+			
+			
 
 			//Add Account To Api Method
 			// addAccount: function() {
@@ -336,7 +325,8 @@
 			// },
 			handleCurrentChange(val) {
 				this.page = val;
-				this.getUsers();
+				// this.getUsers();
+				this.getLeaderApi();
 			},
 			//Get user list
 			getUsers() {
@@ -465,7 +455,7 @@
 			}
 		},
 		mounted() {
-			this.getUserApi();
+			this.getLeaderApi();
 			this.getUsers();
 		}
 	}

@@ -29,10 +29,13 @@
 			</el-table-column>
 			<el-table-column prop="totalRating" label="Total Rating" min-width="200" sortable>
 			</el-table-column>
+			<!-- <el-table-column prop="active" label="Active" min-width="200" sortable>
+				<el-switch v-model="active" disabled></el-switch>
+			</el-table-column> -->
 			<el-table-column label="Option" width="150">
 				<template scope="scope">
 					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">Delete</el-button>
+					<el-button type="danger" size="small" @click="deleteTeamApi(scope.$index, scope.row)">Delete</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -72,6 +75,9 @@
 		<!-- Add New Team To Api -->
 		<el-dialog title="Add New Team" v-model="addTeamVisible" :close-on-click-modal="false">
 			<el-form :model="addTeam" label-width="80px" :rules="addFormRules"  ref="addTeam">
+				<el-form-item label="Leader Id" prop="leaderId" label-width="100px">
+					<el-input v-model="addTeam.leaderId" auto-complete="off"></el-input>
+				</el-form-item>
 				<el-form-item label="Team Name" prop="name" label-width="100px">
 					<el-input v-model="addTeam.name" auto-complete="off"></el-input>
 				</el-form-item>
@@ -127,6 +133,9 @@
 				addTeamVisible: false, 
 				addLoading: false,
 				addFormRules: {
+					leaderId: [
+						{ required: true, message: 'Please enter leader id!', trigger: 'blur' }
+					],
 					name: [
 						{ required: true, message: 'Please enter team name!', trigger: 'blur' }
 					],
@@ -137,6 +146,7 @@
 
 				//New Add Team Form
 				addTeam: {
+					leaderId: '',
 					name: '',
 					salarySuggest: ''
 				},
@@ -145,7 +155,8 @@
 				apiUsers: [],
 				errors: [],
 				searchTeam: [],
-				totalTeams: `0`
+				totalTeams: `0`,
+				active: true
 
 			}
 		},
@@ -183,14 +194,15 @@
 					if (valid) {
 						this.$confirm('Confirm to add?', 'Alert', {}).then(() => {
 							this.addLoading = true;
-							HTTP.post(`Team`, { 
+							HTTP.post(`Team`, {
+								leaderId: this.addTeam.leaderId, 
 								name: this.addTeam.name,
 								salarySuggest: this.addTeam.salarySuggest
 							 }).then(response => {
 								console.log(response.status);
 								console.log( typeof response.status);
 							
-								this.addLoading = false;
+								
 								this.$message({
 									message: `Add Team successfully~`,
 									type: `success`
@@ -198,6 +210,7 @@
 								this.addLoading = false;
 								this.$refs[`addTeam`].resetFields();
 								this.addTeamVisible = false;
+								this.getUserApi();
 								this.countTeam();
 							}).catch(e => {
 								this.$message({
@@ -261,6 +274,51 @@
 					//NProgress.done();
 				});
 			},
+			//delete Team
+			deleteTeamApi: function (index, row) {
+				this.$confirm('Are you sure to delete this record?', 'Alert', {
+					type: 'warning'
+				}).then(() => {
+					// this.listLoading = true;
+					let para = { id: row.id };
+					console.log(row.id);
+					// console
+					// HTTP.delete(`Team/` + `console.log(response.data);`).then(response => {
+					// 	this.listLoading = false;
+						
+					// 	this.$message({
+					// 		message: 'Deleted Successfully!',
+					// 		type: 'success'
+					// 	});
+					// 	console.log(response.data);
+					// 	this.getUserApi();
+					// })
+					// .catch(e => {
+					// 	console.log(this.para);
+					// 	console.log(e.response.data.errors.id);
+						
+					// 	this.$message({
+					// 		message: 'Cannot delete this team!',
+					// 		type: 'error'
+					// 	});
+					// });
+					
+
+					// let para = { id: row.id };
+					// removeUser(para).then((res) => {
+					// 	this.listLoading = false;
+					// 	//NProgress.done();
+					// 	this.$message({
+					// 		message: 'Deleted Successfully!',
+					// 		type: 'success'
+					// 	});
+					// 	this.getUsers();
+					// });
+				}).catch(() => {
+
+				});
+			},
+
 			//delete
 			handleDel: function (index, row) {
 				this.$confirm('Are you sure to delete this record?', 'Alert', {
