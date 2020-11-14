@@ -2,7 +2,11 @@ import Login from './views/Login.vue'
 import NotFound from './views/404.vue'
 import Home from './views/Home.vue'
 import Main from './views/Main.vue'
-import Table from './views/nav1/Table.vue'
+import Account from './views/nav1/Account.vue'
+import Contract from './views/nav1/Contract.vue'
+import Company from './views/nav1/Company.vue'
+import Member from './views/nav1/Member.vue'
+import Project from './views/nav1/Project.vue'
 import Team from './views/nav1/Team.vue'
 import Leader from './views/nav1/Leader.vue'
 import Form from './views/nav1/Form.vue'
@@ -79,7 +83,7 @@ let routes = [
         iconCls: 'fa fa-address-card',
         leaf: true,
         children: [
-            { path: '/table', component: Table, name: 'Accounts Manager'}
+            { path: '/account', component: Account, name: 'Accounts Manager'}
         ]
     },
 
@@ -103,6 +107,47 @@ let routes = [
             { path: '/leader', component: Leader, name: 'Leaders Manager'}
         ]
     },
+    {
+        path: '/',
+        component: Home,
+        name: '',
+        iconCls: 'fa fa-archive',
+        leaf: true,
+        children: [
+            { path: '/project', component: Project, name: 'Projects Manager'}
+        ]
+    },
+    {
+        path: '/',
+        component: Home,
+        name: '',
+        iconCls: 'fa fa-user-o',
+        leaf: true,
+        children: [
+            { path: '/member', component: Member, name: 'Members Manager'}
+        ]
+    },
+    {
+        path: '/',
+        component: Home,
+        name: '',
+        iconCls: 'fa fa-handshake-o',
+        leaf: true,
+        children: [
+            { path: '/contract', component: Contract, name: 'Contracts Manager'}
+        ]
+    },
+    {
+        path: '/',
+        component: Home,
+        name: '',
+        iconCls: 'fa fa-suitcase',
+        leaf: true,
+        children: [
+            { path: '/company', component: Company, name: 'Company List'}
+        ]
+    },
+    
 ];
 
 export default routes;
