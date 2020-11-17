@@ -7,12 +7,13 @@
 					<el-input v-model="filters.name" placeholder="Name"></el-input>
 				</el-form-item>
 				<el-form-item>
-					<el-button type="primary" v-on:click="searchTeamApi">Search</el-button>
+					<el-button type="primary" v-on:click="searchTeamApi" icon="search">Search</el-button>
 				</el-form-item>
 			
 				<el-form-item>
-					<el-button type="primary" @click="handleAddTeam">Add New Team</el-button>
+					<el-button type="primary" @click="handleAddTeam" >Add New Team</el-button>
 				</el-form-item>
+				
 			</el-form>
 		</el-col>
 
@@ -32,10 +33,10 @@
 			<!-- <el-table-column prop="active" label="Active" min-width="200" sortable>
 				<el-switch v-model="active" disabled></el-switch>
 			</el-table-column> -->
-			<el-table-column label="Option" width="150">
+			<el-table-column label="Option" width="180">
 				<template scope="scope">
-					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-					<el-button type="danger" size="small" @click="deleteTeamApi(scope.$index, scope.row)">Delete</el-button>
+					<el-button size="small" @click="handleEdit(scope.$index, scope.row)" icon="edit">Edit</el-button>
+					<el-button type="danger"  size="small" @click="deleteTeamApi(scope.$index, scope.row)" icon="delete">Delete</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -168,7 +169,7 @@
 					pageNo: this.page
 				};
 
-				HTTP.get(`Team/all?pageNo=` + --para.pageNo + `&itemPerPage=10`).then(response => {
+				HTTP.get(`Team/GetAllPaging?pageIndex=` + para.pageNo + `&pageSize=10`).then(response => {
 					this.apiUsers = response.data;
 					console.log(this.apiUsers);
 				})
@@ -213,10 +214,15 @@
 								this.getUserApi();
 								this.countTeam();
 							}).catch(e => {
+								
+								console.log(e.response);
+								console.log(e.response.data.title);
 								this.$message({
-										message: `Cannot add new team~`,
+										message: `Cannot add new team~ ` + e.response.data.title,
 										type: `error`
 									});
+								this.addLoading = false;
+								this.addTeamVisible = false;
 								// console.log(e.response.data);
 								// console.log(e);
 							});

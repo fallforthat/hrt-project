@@ -18,33 +18,10 @@
 			</el-form>
 		</el-col>
 
-		<!--List-->
-		<!-- <el-table :data="users" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
-			<el-table-column type="selection" width="55">
-			</el-table-column>
-			<el-table-column type="index" width="60">
-			</el-table-column>
-			<el-table-column prop="name" label="Name" width="120" sortable>
-			</el-table-column>
-			<el-table-column prop="sex" label="Gender" width="150" :formatter="formatSex" sortable>
-			</el-table-column>
-			<el-table-column prop="age" label="Age" width="100" sortable>
-			</el-table-column>
-			<el-table-column prop="birth" label="Date of birth" width="200" sortable>
-			</el-table-column>
-			<el-table-column prop="addr" label="Address" min-width="180" sortable>
-			</el-table-column>
-			<el-table-column label="Option" width="150">
-				<template scope="scope">
-					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
-					<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">Delete</el-button>
-				</template>
-			</el-table-column>
-		</el-table> -->
+		
 		<!-- List call api -->
-		<el-table :data="apiUsers" highlight-current-row v-loading="listLoading" @selection-change="selsChange" style="width: 100%;">
-			<el-table-column type="selection" width="55">
-			</el-table-column>
+		<el-table :data="apiUsers" highlight-current-row v-loading="listLoading" style="width: 100%;">
+			
 			<el-table-column prop="id" label="Id" width="300">
 			</el-table-column>
 			<el-table-column prop="fullName" label="Full Name" width="220" sortable>
@@ -65,7 +42,7 @@
 
 		<!--Bottom Toolbar-->
 		<el-col :span="24" class="toolbar">
-			<el-button type="danger" @click="batchRemove" :disabled="this.sels.length===0">Batch Remove</el-button>
+			
 			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">
 			</el-pagination>
 		</el-col>

@@ -74,7 +74,7 @@ let routes = [
     {
         path: '*',
         hidden: true,
-        redirect: { path: '/404' }
+        redirect: { path: '/account' }
     },
     {
         path: '/',
@@ -145,6 +145,16 @@ let routes = [
         leaf: true,
         children: [
             { path: '/company', component: Company, name: 'Company List'}
+        ]
+    },
+    {
+        path: '/',
+        component: Home,
+        name: '',
+        iconCls: 'fa fa-suitcase',
+        leaf: true,
+        children: [
+            { path: '/form', component: Form, name: 'Form'}
         ]
     },
     
