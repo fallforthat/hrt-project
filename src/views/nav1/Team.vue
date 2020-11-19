@@ -4,11 +4,11 @@
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true" :model="filters">
 				<el-form-item>
-					<el-input v-model="filters.name" placeholder="Name"></el-input>
+					<el-input v-model="filters.name" placeholder="Search"></el-input>
 				</el-form-item>
-				<el-form-item>
+				<!-- <el-form-item>
 					<el-button type="primary" v-on:click="searchTeamApi" icon="search">Search</el-button>
-				</el-form-item>
+				</el-form-item> -->
 			
 				<el-form-item>
 					<el-button type="primary" @click="handleAddTeam" >Add New Team</el-button>
@@ -18,33 +18,51 @@
 		</el-col>
 
 		<!-- List call api -->
-		<el-table :data="apiUsers" highlight-current-row v-loading="listLoading" style="width: 100%;">
-			
-			<el-table-column prop="id" label="Id" width="350">
+		<el-table :data="apiUsers.filter(data => !filters.name || data.name.toLowerCase().includes(filters.name.toLowerCase()))" highlight-current-row v-loading="listLoading" style="width: 100%;">
+			<el-table-column type="index" width="100">
+
 			</el-table-column>
-			<el-table-column prop="name" label="Name" width="220" sortable>
+			<el-table-column prop="id" label="Id" width="455">
+			</el-table-column>
+			<el-table-column prop="name" label="Name" width="320" sortable>
 			</el-table-column>
 			<el-table-column prop="salarySuggest" label="Salary Suggest" width="250" sortable>
 			</el-table-column>
-			<el-table-column prop="totalMember" label="Total Members" width="200" sortable>
+			<el-table-column prop="isDeleted" label="Status" width="250" sortable  >
+				<template slot-scope="scope">
+					<el-tag :type="scope.row.isDeleted === false ? 'success' : 'danger'" >
+						
+						<span v-if="scope.row.isDeleted">Inactive</span>
+						<span v-else>Active</span>
+					</el-tag>
+				</template>
+				
+			</el-table-column>
+			<!-- <el-table-column prop="totalMember" label="Total Members" width="200" sortable>
 			</el-table-column>
 			<el-table-column prop="totalRating" label="Total Rating" min-width="200" sortable>
-			</el-table-column>
+			</el-table-column> -->
 			<!-- <el-table-column prop="active" label="Active" min-width="200" sortable>
 				<el-switch v-model="active" disabled></el-switch>
 			</el-table-column> -->
-			<el-table-column label="Option" width="180">
+			<el-table-column label="Option" width="200">
 				<template scope="scope">
 					<el-button size="small" @click="handleEdit(scope.$index, scope.row)" icon="edit">Edit</el-button>
 					<el-button type="danger"  size="small" @click="deleteTeamApi(scope.$index, scope.row)" icon="delete">Delete</el-button>
+				</template>
+			</el-table-column>
+			<el-table-column type="expand">
+				<template slot-scope="props">
+					<p> <span style="font-weight: bold"> ID: </span>{{ props.row.id }}</p>
+
 				</template>
 			</el-table-column>
 		</el-table>
 
 		<!--Bottom Toolbar-->
 		<el-col :span="24" class="toolbar">
-			<span>Total Teams:</span>
-			<el-input :placeholder="totalTeams" disabled style="width:50px" size="small"></el-input>
+			<!-- <span>Total Teams:</span>
+			<el-input :placeholder="totalTeams" disabled style="width:50px" size="small"></el-input> -->
 			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">
 			</el-pagination>
 		</el-col>
@@ -157,7 +175,7 @@
 				errors: [],
 				searchTeam: [],
 				totalTeams: `0`,
-				active: true
+				active: ''
 
 			}
 		},
@@ -187,7 +205,10 @@
 				};
 			},
 
-	
+			//format status team
+			formatStatus: function(row, column) {
+				return row.isDeleted === true ?  'Active' : 'Deactivate';
+			},
 			
 			//Add
 			addTeamToApi: function () {
@@ -287,65 +308,49 @@
 				}).then(() => {
 					// this.listLoading = true;
 					let para = { id: row.id };
-					console.log(row.id);
-					// console
-					// HTTP.delete(`Team/` + `console.log(response.data);`).then(response => {
-					// 	this.listLoading = false;
-						
-					// 	this.$message({
-					// 		message: 'Deleted Successfully!',
-					// 		type: 'success'
-					// 	});
-					// 	console.log(response.data);
-					// 	this.getUserApi();
-					// })
-					// .catch(e => {
-					// 	console.log(this.para);
-					// 	console.log(e.response.data.errors.id);
-						
-					// 	this.$message({
-					// 		message: 'Cannot delete this team!',
-					// 		type: 'error'
-					// 	});
-					// });
+					// console.log(row.id);
 					
-
-					// let para = { id: row.id };
-					// removeUser(para).then((res) => {
-					// 	this.listLoading = false;
-					// 	//NProgress.done();
-					// 	this.$message({
-					// 		message: 'Deleted Successfully!',
-					// 		type: 'success'
-					// 	});
-					// 	this.getUsers();
-					// });
-				}).catch(() => {
-
-				});
-			},
-
-			//delete
-			handleDel: function (index, row) {
-				this.$confirm('Are you sure to delete this record?', 'Alert', {
-					type: 'warning'
-				}).then(() => {
-					this.listLoading = true;
-					//NProgress.start();
-					let para = { id: row.id };
-					removeUser(para).then((res) => {
-						this.listLoading = false;
-						//NProgress.done();
+					HTTP.delete(`Team/` + para.id).then(response => {
 						this.$message({
-							message: 'Deleted Successfully!',
-							type: 'success'
+									message: `Deleted Team successfully~`,
+									type: `success`
+								});
+						this.getUserApi();
+						
+					})
+					.catch(e => {
+						this.$message({
+							message: 'Cannot delete team!',
+							type: 'error'
 						});
-						this.getUsers();
+						console.log(e);
 					});
 				}).catch(() => {
 
 				});
 			},
+
+			// //delete
+			// handleDel: function (index, row) {
+			// 	this.$confirm('Are you sure to delete this record?', 'Alert', {
+			// 		type: 'warning'
+			// 	}).then(() => {
+			// 		this.listLoading = true;
+			// 		//NProgress.start();
+			// 		let para = { id: row.id };
+			// 		removeUser(para).then((res) => {
+			// 			this.listLoading = false;
+			// 			//NProgress.done();
+			// 			this.$message({
+			// 				message: 'Deleted Successfully!',
+			// 				type: 'success'
+			// 			});
+			// 			this.getUsers();
+			// 		});
+			// 	}).catch(() => {
+
+			// 	});
+			// },
 			//Show editing interface
 			handleEdit: function (index, row) {
 				this.editFormVisible = true;
@@ -422,7 +427,7 @@
 		},
 		mounted() {
 			this.getUserApi();
-			this.countTeam();
+			// this.countTeam();
 			this.getUsers();
 		}
 	}

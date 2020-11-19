@@ -32,8 +32,13 @@
 			</el-table-column> -->
 			<el-table-column prop="phoneNumber" label="Phone Number" min-width="180" sortable>
 			</el-table-column>
-			<el-table-column  label="Active" min-width="180" sortable>
-				<el-switch label="label" v-model="accountActive" active-color="#13ce66"></el-switch>
+			<el-table-column  label="Status" min-width="180" sortable>
+				<!-- <el-switch label="" v-model="accountActive" disabled></el-switch> -->
+				<template>
+					<el-tag :type="accountActive === true ? 'success' : 'danger'">
+						<span v-if="accountActive">Active</span>
+					</el-tag>
+				</template>
 			</el-table-column>
 			
 			<el-table-column label="Option" width="150">
@@ -48,13 +53,16 @@
         			<p>Full Name: {{ props.row.fullName }}</p> -->
         			<el-form :model="props" label-width="80px"  ref="props" style="width:50%">
 				<el-form-item label="ID" prop="id">
-					<el-input v-model="props.row.id" auto-complete="off"></el-input>
+					<el-input v-model="props.row.id" auto-complete="off" disabled></el-input>
 				</el-form-item>
 				<el-form-item label="Full Name" prop="fullName">
-					<el-input v-model="props.row.fullName" auto-complete="off"></el-input>
+					<el-input v-model="props.row.fullName" auto-complete="off" disabled></el-input>
 				</el-form-item>
 				<el-form-item label="Email" prop="email">
-					<el-input v-model="props.row.email" auto-complete="off"></el-input>
+					<el-input v-model="props.row.email" auto-complete="off" disabled></el-input>
+				</el-form-item>
+				<el-form-item label="Phone" prop="phone">
+					<el-input v-model="props.row.phoneNumber" auto-complete="off" disabled></el-input>
 				</el-form-item>
 				<!-- <el-form-item label="First Name" prop="firstName">
 					<el-input v-model="addAccount.firstName" auto-complete="off" ></el-input>
@@ -88,7 +96,7 @@
 				<el-form-item label="Id" prop="id">
 					<el-input v-model="editAccount.id" auto-complete="off" disabled></el-input>
 				</el-form-item>
-				<el-form-item label="Email" prop="email" label-width="100">
+				<el-form-item label="Email" prop="email" >
 					<el-input v-model="editAccount.email" auto-complete="off" width="100"></el-input>
 					
 				</el-form-item>
