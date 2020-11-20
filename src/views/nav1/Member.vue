@@ -6,18 +6,18 @@
 				<el-form-item>
 					<el-input v-model="filters.name" placeholder="Name"></el-input>
 				</el-form-item>
-				<el-form-item>
+				<!-- <el-form-item>
 					<el-button type="primary" v-on:click="searchTeamApi">Search</el-button>
-				</el-form-item>
+				</el-form-item> -->
 			
 				<el-form-item>
-					<el-button type="primary" @click="handleAddTeam">Add New Team</el-button>
+					<el-button type="primary" @click="handleAddTeam">Add Member</el-button>
 				</el-form-item>
 			</el-form>
 		</el-col>
 
 		<!-- List call api -->
-		<el-table :data="apiUsers" highlight-current-row v-loading="listLoading" style="width: 100%;">
+		<el-table :data="apiUsers.filter(data => !filters.name || data.name.toLowerCase().includes(filters.name.toLowerCase()))" highlight-current-row v-loading="listLoading" style="width: 100%;">
 			<el-table-column type="index" width="100">
 
 			</el-table-column>
@@ -49,8 +49,8 @@
 
 		<!--Bottom Toolbar-->
 		<el-col :span="24" class="toolbar">
-			<span>Total Teams:</span>
-			<el-input :placeholder="totalTeams" disabled style="width:50px" size="small"></el-input>
+			<!-- <span>Total Teams:</span>
+			<el-input :placeholder="totalTeams" disabled style="width:50px" size="small"></el-input> -->
 			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">
 			</el-pagination>
 		</el-col>

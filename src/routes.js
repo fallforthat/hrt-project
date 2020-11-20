@@ -147,16 +147,16 @@ let routes = [
             { path: '/company', component: Company, name: 'Company List'}
         ]
     },
-    {
-        path: '/',
-        component: Home,
-        name: '',
-        iconCls: 'fa fa-suitcase',
-        leaf: true,
-        children: [
-            { path: '/form', component: Form, name: 'Form'}
-        ]
-    },
+    // {
+    //     path: '/',
+    //     component: Home,
+    //     name: '',
+    //     iconCls: 'fa fa-suitcase',
+    //     leaf: true,
+    //     children: [
+    //         { path: '/form', component: Form, name: 'Form'}
+    //     ]
+    // },
 
     
 ];

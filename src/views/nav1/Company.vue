@@ -42,10 +42,10 @@
 				</template>
 			</el-table-column>
 			<el-table-column type="expand">
-				<template slot-scope="props">
+				<!-- <template slot-scope="props">
 					<p> <span style="font-weight: bold"> ID: </span>{{ props.row.id }}</p>
 
-				</template>
+				</template> -->
 			</el-table-column>
 		</el-table>
 

@@ -11,24 +11,25 @@
 				</el-form-item> -->
 			
 				<el-form-item>
-					<el-button type="primary" @click="handleAddTeam">Add New Team</el-button>
+					<el-button type="primary" @click="handleAddTeam">Add Contract</el-button>
 				</el-form-item>
 			</el-form>
 		</el-col>
 
 		<!-- List call api -->
-		<el-table :data="apiUsers" highlight-current-row v-loading="listLoading" style="width: 100%;">
+		<el-table :data="apiUsers.filter(data => !filters.name || data.name.toLowerCase().includes(filters.name.toLowerCase()))" highlight-current-row v-loading="listLoading" style="width: 100%;">
 			
 			<el-table-column type="index" width="100">
 
 			</el-table-column>
 			<el-table-column prop="name" label="Name" width="420" sortable>
 			</el-table-column>
-			<el-table-column prop="startDay" label="Start Day" width="250" sortable :formatter="formatStartDate">
+			<el-table-column prop="startDay" label="Start Day" width="350" sortable :formatter="formatStartDate">
 			</el-table-column>
-			<el-table-column prop="endDay" label="End Day" width="200" sortable :formatter="formatEndDate">
+			<el-table-column prop="endDay" label="End Day" width="230" sortable :formatter="formatEndDate">
 			</el-table-column>
-			
+			<el-table-column prop="price" label="Price" width="330" sortable >
+			</el-table-column>
 			<el-table-column label="Option" width="150">
 				<template scope="scope">
 					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
@@ -39,8 +40,8 @@
 
 		<!--Bottom Toolbar-->
 		<el-col :span="24" class="toolbar">
-			<span>Total Teams:</span>
-			<el-input :placeholder="totalTeams" disabled style="width:50px" size="small"></el-input>
+			<!-- <span>Total Teams:</span>
+			<el-input :placeholder="totalTeams" disabled style="width:50px" size="small"></el-input> -->
 			<el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">
 			</el-pagination>
 		</el-col>

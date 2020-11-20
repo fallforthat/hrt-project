@@ -24,15 +24,25 @@
 			<el-table-column type="index" width="100">
 
 			</el-table-column>
-			<el-table-column prop="projectStatusId" label="Id" width="300">
+			<el-table-column prop="projectStatusId" label="Id" width="400">
 			</el-table-column>
-			<el-table-column prop="name" label="Project Name" width="220" sortable>
+			<el-table-column prop="name" label="Project Name" width="320" sortable>
 			</el-table-column>
 			<el-table-column prop="startDate" label="Start Date" width="200" sortable :formatter="formatStartDate">
 			</el-table-column>
 			<el-table-column prop="endDate" label="End Date" width="200" sortable :formatter="formatEndDate">
 			</el-table-column>
-			<el-table-column prop="contractId" label="Contract ID" min-width="300" sortable>
+			<!-- <el-table-column prop="contractId" label="Contract ID" min-width="300" sortable>
+			</el-table-column> -->
+			<el-table-column prop="isDeleted" label="Status" width="250" sortable  >
+				<template slot-scope="scope">
+					<el-tag :type="scope.row.isDeleted === false ? 'success' : 'danger'" >
+						
+						<span v-if="scope.row.isDeleted">Inactive</span>
+						<span v-else>Active</span>
+					</el-tag>
+				</template>
+				
 			</el-table-column>
 			<el-table-column label="Option" width="150">
 				<template scope="scope">
