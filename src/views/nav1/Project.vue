@@ -6,31 +6,33 @@
 				<el-form-item>
 					<el-input v-model="filters.name" placeholder="Name"></el-input>
 				</el-form-item>
-				<el-form-item>
+				<!-- <el-form-item>
 					<el-button type="primary" v-on:click="getUsers">Search</el-button>
-				</el-form-item>
+				</el-form-item> -->
 				<el-form-item>
-					<el-button type="primary" @click="handleAdd">Add User</el-button>
+					<el-button type="primary" @click="handleAdd">Add Project</el-button>
 				</el-form-item>
-				<el-form-item>
+				<!-- <el-form-item>
 					<el-button type="primary" @click="handleAddAccount">Add New Account</el-button>
-				</el-form-item>
+				</el-form-item> -->
 			</el-form>
 		</el-col>
 
 		
 		<!-- List call api -->
-		<el-table :data="apiUsers" highlight-current-row v-loading="listLoading" style="width: 100%;">
-			
-			<el-table-column prop="id" label="Id" width="300">
+		<el-table :data="apiProjects" highlight-current-row v-loading="listLoading" style="width: 100%;">
+			<el-table-column type="index" width="100">
+
 			</el-table-column>
-			<el-table-column prop="fullName" label="Full Name" width="220" sortable>
+			<el-table-column prop="projectStatusId" label="Id" width="300">
 			</el-table-column>
-			<el-table-column prop="email" label="Email" width="200" sortable>
+			<el-table-column prop="name" label="Project Name" width="220" sortable>
 			</el-table-column>
-			<el-table-column prop="address" label="Address" width="200" sortable>
+			<el-table-column prop="startDate" label="Start Date" width="200" sortable :formatter="formatStartDate">
 			</el-table-column>
-			<el-table-column prop="phoneNumber" label="Phone Number" min-width="180" sortable>
+			<el-table-column prop="endDate" label="End Date" width="200" sortable :formatter="formatEndDate">
+			</el-table-column>
+			<el-table-column prop="contractId" label="Contract ID" min-width="300" sortable>
 			</el-table-column>
 			<el-table-column label="Option" width="150">
 				<template scope="scope">
@@ -76,33 +78,7 @@
 			</div>
 		</el-dialog>
 
-		<!--New User-->
-		<el-dialog title="Add New User" v-model="addFormVisible" :close-on-click-modal="false">
-			<el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
-				<el-form-item label="Name" prop="name">
-					<el-input v-model="addForm.name" auto-complete="off"></el-input>
-				</el-form-item>
-				<el-form-item label="Gender">
-					<el-radio-group v-model="addForm.sex">
-						<el-radio class="radio" :label="1">Male</el-radio>
-						<el-radio class="radio" :label="0">Female</el-radio>
-					</el-radio-group>
-				</el-form-item>
-				<el-form-item label="Age">
-					<el-input-number v-model="addForm.age" :min="0" :max="200"></el-input-number>
-				</el-form-item>
-				<el-form-item label="Date of Birth">
-					<el-date-picker type="date" placeholder="Select Date" v-model="addForm.birth"></el-date-picker>
-				</el-form-item>
-				<el-form-item label="Address">
-					<el-input type="textarea" v-model="addForm.addr"></el-input>
-				</el-form-item>
-			</el-form>
-			<div slot="footer" class="dialog-footer">
-				<el-button @click.native="addFormVisible = false">Cancel</el-button>
-				<el-button type="primary" @click.native="addSubmit" :loading="addLoading">Add</el-button>
-			</div>
-		</el-dialog>
+		
 
 		<!-- Add New Account To Api -->
 		<el-dialog title="Add New Account" v-model="addAccountVisible" :close-on-click-modal="false">
@@ -216,23 +192,21 @@
 				},
 
 				//data get from api
-				apiUsers: []
+				apiProjects: []
 
 			}
 		},
 		methods: {
 			//get users from api
-			getUserApi: function() {
-				// JSONHTTP.get(`users`).then(response => {
-				// 	this.apiUsers = response.data;
-				// 	console.log(this.apiUsers);
-				// })
-				// .catch(e => {
-				// 	console.log(e);
-				// })
-				HTTP.get(`Account/AllUser`).then(response => {
-					this.apiUsers = response.data;
-					console.log(this.apiUsers);
+			getProjectApi: function() {
+				
+				let para = {
+					pageNo: this.page
+				};
+
+				HTTP.get(`Project/GetAllPaging?pageIndex=` + para.pageNo + `&pageSize=10`).then(response => {
+					this.apiProjects = response.data;
+					console.log(this.apiProjects);
 				})
 				.catch(e => {
 					console.log(e);
@@ -254,46 +228,27 @@
 				};
 			},
 
-			//Add Account To Api Method
-			// addAccount: function() {
-			// 	HTTP.post(`Account`, { params }).then(response => {
-			// 		console.log(response.status);
-			// 		if(response.status == 201) {
-			// 			$message({
-			// 				message: 'Add Account successfully!',
-			// 				type: 'success'
-			// 			})
-			// 		}
-			// 	})
-			// 	.catch(e => {
-			// 		console.log(e);
-			// 	})
-			// },
+			//format start date
+			formatStartDate: function(row, column) {
+				let str = row.startDate.split('T');
+				return str[0];
+				
+			},
 			
+			//format start date
+			formatEndDate: function(row, column) {
+				let str = row.endDate.split('T');
+				return str[0];
+				
+			},
+
 			//Add
 			addAccountToApi: function () {
 				//this.$refs.addAccount.validate((valid) => {
 					//if (valid) {
 						this.$confirm('Confirm to add?', 'Alert', {}).then(() => {
 							this.addLoading = true;
-							//NProgress.start();
-							// let para = Object.assign({}, this.addAccount);
-							// let para = JSON.parse(this.addAccount);
-							// para.birth = (!para.birth || para.birth == '') ? '' : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd');
-							// addUser(para).then((res) => {
-							// 	this.addLoading = false;
-							// 	//NProgress.done();
-							// 	this.$message({
-							// 		message: 'Submitted successfully',
-							// 		type: 'success'
-							// 	});
-							// 	this.$refs['addForm'].resetFields();
-							// 	this.addFormVisible = false;
-							// 	this.getUsers();
-							// });
-							// let accountData = Object.values(this.addAccount);
-							// console.log(`Form: ` + typeof this.addAccount);
-							// console.log(accountData);
+							
 							HTTP.post(`Account`, { 
 								email: this.addAccount.email,
 								password: this.addAccount.password,
@@ -464,7 +419,7 @@
 			}
 		},
 		mounted() {
-			this.getUserApi();
+			this.getProjectApi();
 			this.getUsers();
 		}
 	}

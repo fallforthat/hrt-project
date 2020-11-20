@@ -18,16 +18,26 @@
 
 		<!-- List call api -->
 		<el-table :data="apiUsers" highlight-current-row v-loading="listLoading" style="width: 100%;">
-			
-			<el-table-column prop="id" label="Id" width="350">
+			<el-table-column type="index" width="100">
+
+			</el-table-column>
+			<el-table-column prop="teamId" label="Team ID" width="350">
 			</el-table-column>
 			<el-table-column prop="name" label="Name" width="220" sortable>
 			</el-table-column>
-			<el-table-column prop="salarySuggest" label="Salary Suggest" width="250" sortable>
+			<el-table-column prop="salary" label="Salary" width="250" sortable>
 			</el-table-column>
-			<el-table-column prop="totalMember" label="Total Members" width="200" sortable>
+			<el-table-column prop="experience" label="Experience" width="200" sortable>
 			</el-table-column>
-			<el-table-column prop="totalRating" label="Total Rating" min-width="200" sortable>
+			<el-table-column prop="isDeleted" label="Status" width="250" sortable  >
+				<template slot-scope="scope">
+					<el-tag :type="scope.row.isDeleted === false ? 'success' : 'danger'" >
+						
+						<span v-if="scope.row.isDeleted">Inactive</span>
+						<span v-else>Active</span>
+					</el-tag>
+				</template>
+				
 			</el-table-column>
 			<el-table-column label="Option" width="150">
 				<template scope="scope">
@@ -157,7 +167,7 @@
 					pageNo: this.page
 				};
 
-				HTTP.get(`Team/all?pageNo=` + --para.pageNo + `&itemPerPage=10`).then(response => {
+				HTTP.get(`Member/GetAllWithPaging?pageNumber=` + para.pageNo + `&itemPerPage=10`).then(response => {
 					this.apiUsers = response.data;
 					console.log(this.apiUsers);
 				})

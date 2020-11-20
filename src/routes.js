@@ -157,7 +157,10 @@ let routes = [
             { path: '/form', component: Form, name: 'Form'}
         ]
     },
+
     
 ];
+
+
 
 export default routes;

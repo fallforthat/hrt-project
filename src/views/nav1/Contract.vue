@@ -6,9 +6,9 @@
 				<el-form-item>
 					<el-input v-model="filters.name" placeholder="Name"></el-input>
 				</el-form-item>
-				<el-form-item>
+				<!-- <el-form-item>
 					<el-button type="primary" v-on:click="searchTeamApi">Search</el-button>
-				</el-form-item>
+				</el-form-item> -->
 			
 				<el-form-item>
 					<el-button type="primary" @click="handleAddTeam">Add New Team</el-button>
@@ -19,16 +19,16 @@
 		<!-- List call api -->
 		<el-table :data="apiUsers" highlight-current-row v-loading="listLoading" style="width: 100%;">
 			
-			<el-table-column prop="id" label="Id" width="350">
+			<el-table-column type="index" width="100">
+
 			</el-table-column>
-			<el-table-column prop="name" label="Name" width="220" sortable>
+			<el-table-column prop="name" label="Name" width="420" sortable>
 			</el-table-column>
-			<el-table-column prop="salarySuggest" label="Salary Suggest" width="250" sortable>
+			<el-table-column prop="startDay" label="Start Day" width="250" sortable :formatter="formatStartDate">
 			</el-table-column>
-			<el-table-column prop="totalMember" label="Total Members" width="200" sortable>
+			<el-table-column prop="endDay" label="End Day" width="200" sortable :formatter="formatEndDate">
 			</el-table-column>
-			<el-table-column prop="totalRating" label="Total Rating" min-width="200" sortable>
-			</el-table-column>
+			
 			<el-table-column label="Option" width="150">
 				<template scope="scope">
 					<el-button size="small" @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
@@ -157,7 +157,7 @@
 					pageNo: this.page
 				};
 
-				HTTP.get(`Team/all?pageNo=` + --para.pageNo + `&itemPerPage=10`).then(response => {
+				HTTP.get(`Contract/GetAllPaging?pageIndex=` + para.pageNo + `&itemPerPage=10`).then(response => {
 					this.apiUsers = response.data;
 					console.log(this.apiUsers);
 				})
@@ -175,7 +175,19 @@
 				};
 			},
 
-	
+			//format start date
+			formatStartDate: function(row, column) {
+				let str = row.startDay.split('T');
+				return str[0];
+				
+			},
+			
+			//format start date
+			formatEndDate: function(row, column) {
+				let str = row.endDay.split('T');
+				return str[0];
+				
+			},
 			
 			//Add
 			addTeamToApi: function () {

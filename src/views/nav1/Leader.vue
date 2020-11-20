@@ -17,7 +17,7 @@
 		</el-col>
 
 		<!-- List call api -->
-		<el-table :data="apiLeaders.filter(data => !filters.name || data.name.toLowerCase().includes(filters.name.toLowerCase()))" highlight-current-row v-loading="listLoading" style="width: 100%;">
+		<el-table :data="apiLeaders.filter(data => !filters.name || data.name.toLowerCase().includes(filters.name.toLowerCase()))" highlight-current-row v-loading="listLoading" style="width: 100%;" :row-class-name="tableRowClassName">
 			<el-table-column type="index" width="100">
 			</el-table-column>
 			<el-table-column prop="id" label="Id" width="450">
@@ -49,10 +49,10 @@
 				</template>
 			</el-table-column>
 			<el-table-column type="expand">
-				<template slot-scope="props">
+				<!-- <template slot-scope="props">
 					<p> <span style="font-weight: bold"> ID: </span>{{ props.row.id }}</p>
 
-				</template>
+				</template> -->
 			</el-table-column>
 		</el-table>
 
@@ -112,7 +112,13 @@
 		</el-dialog>
 	</section>
 </template>
+<style>
+  .el-table .isDeleted-row {
+    background: #e4e9f2;
+  }
 
+  
+</style>
 <script>
 	import util from '../../common/js/util'
 	//import NProgress from 'nprogress'
@@ -211,7 +217,13 @@
 				};
 			},
 			
-			
+			//set status of row table
+			tableRowClassName(row) {
+				if(row.isDeleted === true) {
+					return 'isDeleted-row';
+				}
+				return '';
+			},
 
 			
 			//Add
@@ -282,20 +294,28 @@
 			},
 			//delete
 			handleDel: function (index, row) {
+				
 				this.$confirm('Are you sure to delete this record?', 'Alert', {
 					type: 'warning'
 				}).then(() => {
-					this.listLoading = true;
-					//NProgress.start();
+					// this.listLoading = true;
 					let para = { id: row.id };
-					removeUser(para).then((res) => {
-						this.listLoading = false;
-						//NProgress.done();
+					// console.log(row.id);
+					
+					HTTP.delete(`Leader/` + para.id).then(response => {
 						this.$message({
-							message: 'Deleted Successfully!',
-							type: 'success'
+									message: `Deleted Leader successfully~`,
+									type: `success`
+								});
+						this.getLeaderApi();
+						
+					})
+					.catch(e => {
+						this.$message({
+							message: 'Cannot delete leader!',
+							type: 'error'
 						});
-						this.getUsers();
+						console.log(e);
 					});
 				}).catch(() => {
 

@@ -41,45 +41,14 @@
 				</template>
 			</el-table-column>
 			
-			<el-table-column label="Option" width="150">
+			<!-- <el-table-column label="Option" width="150">
 				<template scope="scope">
 					<el-button size="small" @click="handleEdit(scope.$index, scope.row)" icon="edit">Edit</el-button>
-					<!-- <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">Delete</el-button> -->
+					
 				</template>
-			</el-table-column>
+			</el-table-column> -->
 			<el-table-column type="expand">
-				<template slot-scope="props">
-        			<!-- <p>ID: {{ props.row.id }}</p>
-        			<p>Full Name: {{ props.row.fullName }}</p> -->
-        			<el-form :model="props" label-width="80px"  ref="props" style="width:50%">
-				<el-form-item label="ID" prop="id">
-					<el-input v-model="props.row.id" auto-complete="off" disabled></el-input>
-				</el-form-item>
-				<el-form-item label="Full Name" prop="fullName">
-					<el-input v-model="props.row.fullName" auto-complete="off" disabled></el-input>
-				</el-form-item>
-				<el-form-item label="Email" prop="email">
-					<el-input v-model="props.row.email" auto-complete="off" disabled></el-input>
-				</el-form-item>
-				<el-form-item label="Phone" prop="phone">
-					<el-input v-model="props.row.phoneNumber" auto-complete="off" disabled></el-input>
-				</el-form-item>
-				<!-- <el-form-item label="First Name" prop="firstName">
-					<el-input v-model="addAccount.firstName" auto-complete="off" ></el-input>
-				</el-form-item>
-				<el-form-item label="Last Name" prop="lastName">
-					<el-input v-model="addAccount.lastName" auto-complete="off" ></el-input>
-				</el-form-item>
 				
-				<el-form-item label="Address" prop="address">
-					<el-input type="textarea" v-model="addAccount.address"></el-input>
-				</el-form-item>
-				<el-form-item label="Phone Number" prop="phone">
-					<el-input v-model="addAccount.phone" auto-complete="off" ></el-input>
-				</el-form-item> -->
-			
-			</el-form>
-      			</template>
 			</el-table-column>
 		</el-table>
 

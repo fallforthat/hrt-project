@@ -18,7 +18,7 @@
 		</el-col>
 
 		<!-- List call api -->
-		<el-table :data="apiUsers.filter(data => !filters.name || data.name.toLowerCase().includes(filters.name.toLowerCase()))" highlight-current-row v-loading="listLoading" style="width: 100%;">
+		<el-table :data="apiUsers.filter(data => !filters.name || data.name.toLowerCase().includes(filters.name.toLowerCase()))" highlight-current-row v-loading="listLoading" style="width: 100%;" :row-class-name="tableRowClassName">
 			<el-table-column type="index" width="100">
 
 			</el-table-column>
@@ -45,7 +45,7 @@
 			<!-- <el-table-column prop="active" label="Active" min-width="200" sortable>
 				<el-switch v-model="active" disabled></el-switch>
 			</el-table-column> -->
-			<el-table-column label="Option" width="200">
+			<el-table-column label="Option" width="209">
 				<template scope="scope">
 					<el-button size="small" @click="handleEdit(scope.$index, scope.row)" icon="edit">Edit</el-button>
 					<el-button type="danger"  size="small" @click="deleteTeamApi(scope.$index, scope.row)" icon="delete">Delete</el-button>
@@ -53,7 +53,26 @@
 			</el-table-column>
 			<el-table-column type="expand">
 				<template slot-scope="props">
-					<p> <span style="font-weight: bold"> ID: </span>{{ props.row.id }}</p>
+					
+					<p>
+						 <span style="font-weight: bold"> FeedBack: </span>
+						<span v-if="props.row.feedBack === null">None</span>
+						<span v-else>{{ props.row.feedBack }}</span>
+					</p>
+					<p> <span style="font-weight: bold"> Total Members: </span>{{ props.row.totalMember }}</p>
+					<p> <span style="font-weight: bold"> Total Projects: </span>{{ props.row.totalProject }}</p>
+					<p>
+						<span style="font-weight: bold"> Skills: </span>
+						
+						<template v-if="props.row.skills.length === 0">
+							<span>None</span>
+						</template>
+						<template v-for="skill in props.row.skills" v-if="props.row.skills.length > 0">
+							<el-tag type="primary">{{ skill }}</el-tag>
+						</template>
+						<!-- <el-tag type="primary">Java</el-tag> -->
+						
+					</p>
 
 				</template>
 			</el-table-column>
@@ -112,7 +131,13 @@
 		</el-dialog>
 	</section>
 </template>
+<style>
+  .el-table .isDeleted-row {
+    background: #e4e9f2;
+  }
 
+  
+</style>
 <script>
 	import util from '../../common/js/util'
 	//import NProgress from 'nprogress'
@@ -136,16 +161,16 @@
 					name: [
 						{ required: true, message: 'Please enter your name!', trigger: 'blur' }
 					],
-					salarySuggest: [
-						{ required: true, message: 'Please enter salary!', trigger: 'blur' }
-					]
+					// salarySuggest: [
+					// 	{ required: true, message: 'Please enter salary!', trigger: 'blur' }
+					// ]
 					
 				},
 				//Edit interface data
 				editForm: {
 					id: 0,
 					name: '',
-					salarySuggest: ''
+					salarySuggest: 0
 				},
 
 				addFormVisible: false,//Whether the new interface is displayed
@@ -158,16 +183,16 @@
 					name: [
 						{ required: true, message: 'Please enter team name!', trigger: 'blur' }
 					],
-					salarySuggest: [
-						{ required: true, message: 'Please enter salary!', trigger: 'blur'}
-					]
+					// salarySuggest: [
+					// 	{ required: true, message: 'Please enter salary!', trigger: 'blur'}
+					// ]
 				},
 
 				//New Add Team Form
 				addTeam: {
 					leaderId: '',
 					name: '',
-					salarySuggest: ''
+					salarySuggest: 0
 				},
 
 				//data get from api
@@ -189,7 +214,7 @@
 
 				HTTP.get(`Team/GetAllPaging?pageIndex=` + para.pageNo + `&pageSize=10`).then(response => {
 					this.apiUsers = response.data;
-					console.log(this.apiUsers);
+					console.log(this.apiUsers[0].skills.length);
 				})
 				.catch(e => {
 					console.log(e);
@@ -201,7 +226,7 @@
 				this.addTeamVisible = true;
 				this.addTeam = {
 					name: '',
-					salarySuggest: ''
+					salarySuggest: 0
 				};
 			},
 
@@ -210,6 +235,14 @@
 				return row.isDeleted === true ?  'Active' : 'Deactivate';
 			},
 			
+			//set status of row table
+			tableRowClassName(row) {
+				if(row.isDeleted === true) {
+					return 'isDeleted-row';
+				}
+				return '';
+			},
+
 			//Add
 			addTeamToApi: function () {
 				this.$refs.addTeam.validate((valid) => {
@@ -219,10 +252,9 @@
 							HTTP.post(`Team`, {
 								leaderId: this.addTeam.leaderId, 
 								name: this.addTeam.name,
-								salarySuggest: this.addTeam.salarySuggest
+								salarySuggest: parseFloat(this.addTeam.salarySuggest)
 							 }).then(response => {
-								console.log(response.status);
-								console.log( typeof response.status);
+								
 							
 								
 								this.$message({
@@ -233,7 +265,7 @@
 								this.$refs[`addTeam`].resetFields();
 								this.addTeamVisible = false;
 								this.getUserApi();
-								this.countTeam();
+								// this.countTeam();
 							}).catch(e => {
 								
 								console.log(e.response);
@@ -330,27 +362,7 @@
 				});
 			},
 
-			// //delete
-			// handleDel: function (index, row) {
-			// 	this.$confirm('Are you sure to delete this record?', 'Alert', {
-			// 		type: 'warning'
-			// 	}).then(() => {
-			// 		this.listLoading = true;
-			// 		//NProgress.start();
-			// 		let para = { id: row.id };
-			// 		removeUser(para).then((res) => {
-			// 			this.listLoading = false;
-			// 			//NProgress.done();
-			// 			this.$message({
-			// 				message: 'Deleted Successfully!',
-			// 				type: 'success'
-			// 			});
-			// 			this.getUsers();
-			// 		});
-			// 	}).catch(() => {
-
-			// 	});
-			// },
+		
 			//Show editing interface
 			handleEdit: function (index, row) {
 				this.editFormVisible = true;
@@ -377,7 +389,7 @@
 							HTTP.put(`Team`, {
 								id: this.editForm.id,
 								name: this.editForm.name,
-								salarySuggest: this.editForm.salarySuggest
+								salarySuggest: parseFloat(this.editForm.salarySuggest)
 							}).then((response) => {
 								this.editLoading = false;
 								
@@ -390,7 +402,12 @@
 								this.getUserApi();
 							})
 							.catch( e => {
+								this.$message({
+									message: 'Edit failed!',
+									type: 'error'
+								});
 								console.log(e);
+								this.editFormVisible = false;
 							})
 							
 							
